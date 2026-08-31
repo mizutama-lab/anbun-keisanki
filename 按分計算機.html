@@ -94,7 +94,7 @@
     .preset-name { font-size:13px; font-weight:700; color:var(--text); display:block; }
     .preset-rate { font-size:11px; color:var(--text-light); margin-top:3px; display:block; }
     .preset-dot { width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:4px; vertical-align:middle; }
-    .preset-edit-row { display:flex; align-items:center; gap:8px; margin-bottom:10px; padding:10px 12px; background:#faf5ff; border-radius:12px; border:1px solid #e8d8f0; }
+    .preset-edit-row { display:flex; align-items:center; gap:6px; margin-bottom:10px; padding:10px 10px; background:#faf5ff; border-radius:12px; border:1px solid #e8d8f0; flex-wrap:nowrap; }
     .preset-edit-row:last-child { margin-bottom:0; }
     .preset-edit-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
     .preset-edit-name-input { flex:1; border:2px solid #e8d8f0; border-radius:8px; padding:6px 10px; font-size:13px; font-weight:700; font-family:"Zen Maru Gothic",sans-serif; color:var(--text); background:white; outline:none; }
@@ -102,7 +102,7 @@
     .preset-edit-rate-input { width:56px; border:2px solid #e8d8f0; border-radius:8px; padding:6px 8px; font-size:15px; font-weight:700; font-family:"Zen Maru Gothic",sans-serif; color:var(--text); background:white; outline:none; text-align:center; }
     .preset-edit-rate-input:focus { border-color:var(--lavender); }
     .percent-sign { font-size:13px; color:var(--text-light); font-weight:700; flex-shrink:0; }
-    .priv-preview { font-size:11px; color:var(--text-light); flex-shrink:0; width:60px; text-align:right; }
+    .priv-preview { font-size:10px; color:var(--text-light); flex-shrink:0; width:48px; text-align:right; }
     .custom-row { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
     .custom-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
     .custom-label-input { flex:1.2; border:2px solid #e8d8f0; border-radius:10px; padding:10px 12px; font-size:13px; font-family:"Zen Maru Gothic",sans-serif; color:var(--text); background:#faf5ff; outline:none; transition:border-color 0.2s; }
@@ -166,6 +166,7 @@
     input[type=number]::-webkit-outer-spin-button { -webkit-appearance:none; margin:0; }
     input[type=number] { -moz-appearance:textfield; }
     .amount-input { caret-color:var(--lavender); }
+    /* 整数のみ入力可能にするスタイル */
   </style>
 </head>
 <body>
@@ -203,7 +204,7 @@
       <div class="section-title">金額を入力</div>
       <div class="amount-input-row">
         <span class="yen-sign">¥</span>
-        <input type="number" class="amount-input" id="presetAmount" placeholder="0" inputmode="numeric" onkeydown="if(event.key==='ArrowUp'||event.key==='ArrowDown')event.preventDefault();" oninput="calcPreset()">
+        <input type="number" class="amount-input" id="presetAmount" placeholder="0" inputmode="numeric" onkeydown="if(event.key==='ArrowUp'||event.key==='ArrowDown'||event.key==='.')event.preventDefault();" oninput="calcPreset()">
       </div>
       <div class="rate-display">
         <div class="rate-chip business"><span class="chip-label">💼 事業用</span><span class="chip-rate" id="bizRate">－%</span></div>
@@ -235,7 +236,7 @@
       <div class="section-title">金額を入力</div>
       <div class="amount-input-row">
         <span class="yen-sign">¥</span>
-        <input type="number" class="amount-input" id="customAmount" placeholder="0" inputmode="numeric" onkeydown="if(event.key==='ArrowUp'||event.key==='ArrowDown')event.preventDefault();" oninput="calcCustom()">
+        <input type="number" class="amount-input" id="customAmount" placeholder="0" inputmode="numeric" onkeydown="if(event.key==='ArrowUp'||event.key==='ArrowDown'||event.key==='.')event.preventDefault();" oninput="calcCustom()">
       </div>
     </div>
     <div class="section">
@@ -273,7 +274,7 @@
       <div class="section-title">請求書の合計金額</div>
       <div class="amount-input-row">
         <span class="yen-sign">¥</span>
-        <input type="number" class="amount-input" id="multiTotal" placeholder="0" inputmode="numeric" onkeydown="if(event.key==='ArrowUp'||event.key==='ArrowDown')event.preventDefault();" oninput="calcMulti()">
+        <input type="number" class="amount-input" id="multiTotal" placeholder="0" inputmode="numeric" onkeydown="if(event.key==='ArrowUp'||event.key==='ArrowDown'||event.key==='.')event.preventDefault();" oninput="calcMulti()">
       </div>
     </div>
     <div class="section">
@@ -298,7 +299,7 @@
       <div class="section-title" id="seikyuSectionTitle">管理組合</div>
       <div class="amount-input-row">
         <span class="yen-sign">¥</span>
-        <input type="number" class="amount-input" id="seikyuTotal" placeholder="0" inputmode="numeric" onkeydown="if(event.key==='ArrowUp'||event.key==='ArrowDown')event.preventDefault();" oninput="calcSeikyu()">
+        <input type="number" class="amount-input" id="seikyuTotal" placeholder="0" inputmode="numeric" onkeydown="if(event.key==='ArrowUp'||event.key==='ArrowDown'||event.key==='.')event.preventDefault();" oninput="calcSeikyu()">
       </div>
 
       <!-- 説明書きボックス（表示モード） -->
@@ -456,14 +457,40 @@
   }
 
   // ===== カスタム =====
-  function onRate0(){const v=parseFloat(document.getElementById("customRate0").value)||0;document.getElementById("customRate1").value=Math.max(0,100-v);updateCustomCheck();calcCustom();}
-  function onRate1(){const v=parseFloat(document.getElementById("customRate1").value)||0;document.getElementById("customRate0").value=Math.max(0,100-v);updateCustomCheck();calcCustom();}
-  function updateCustomCheck(){const r0=parseFloat(document.getElementById("customRate0").value)||0;const r1=parseFloat(document.getElementById("customRate1").value)||0;const t=r0+r1;const el=document.getElementById("totalCheckCustom");if(t===100){el.className="total-check ok";el.textContent="✅ 合計: 100%";}else{el.className="total-check ng";el.textContent="⚠️ 合計: "+t+"%（100%にしてね）";}}
+  // ④ 按分率を0〜100に制限するヘルパー
+  function clampRate(val) { return Math.min(100, Math.max(0, parseFloat(val)||0)); }
+  function onRate0(){
+    const v=clampRate(document.getElementById("customRate0").value);
+    document.getElementById("customRate0").value=v;
+    document.getElementById("customRate1").value=Math.max(0,100-v);
+    updateCustomCheck();calcCustom();
+  }
+  function onRate1(){
+    const v=clampRate(document.getElementById("customRate1").value);
+    document.getElementById("customRate1").value=v;
+    document.getElementById("customRate0").value=Math.max(0,100-v);
+    updateCustomCheck();calcCustom();
+  }
+  function updateCustomCheck(){
+    const r0=clampRate(document.getElementById("customRate0").value);
+    const r1=clampRate(document.getElementById("customRate1").value);
+    const t=r0+r1;
+    const el=document.getElementById("totalCheckCustom");
+    // ⑤ 0〜100の範囲外は合計100%扱いにしない
+    if(t===100&&r0>=0&&r0<=100&&r1>=0&&r1<=100){
+      el.className="total-check ok";el.textContent="✅ 合計: 100%";
+    }else{
+      el.className="total-check ng";el.textContent="⚠️ 合計: "+t+"%（100%にしてね）";
+    }
+  }
   function calcCustom(){
     const amt=parseFloat(document.getElementById("customAmount").value)||0;
-    const r0=parseFloat(document.getElementById("customRate0").value)||0;
-    const r1=parseFloat(document.getElementById("customRate1").value)||0;
-    if(amt<=0||r0+r1!==100){document.getElementById("customResult").classList.add("hidden");return;}
+    const r0=clampRate(document.getElementById("customRate0").value);
+    const r1=clampRate(document.getElementById("customRate1").value);
+    // ④⑤ 異常値チェック
+    if(amt<=0||r0+r1!==100||r0<0||r0>100||r1<0||r1>100){
+      document.getElementById("customResult").classList.add("hidden");return;
+    }
     const a0=Math.round(amt*r0/100);const a1=amt-a0;
     window.cRaw0=a0;window.cRaw1=a1;
     document.getElementById("cLabel0").textContent=document.getElementById("customLabel0").value||"事業用";
@@ -490,14 +517,15 @@
         </div>
       </div>`).join("");
   }
-  function addMultiItem(){multiItems.push({label:"項目"+(multiItems.length+1),amount:"",rate:70,color:rowColors[multiItems.length%rowColors.length]});buildMultiItems();calcMulti();}
-  function delMultiItem(i){multiItems.splice(i,1);buildMultiItems();calcMulti();}
+  function addMultiItem(){multiItems.push({label:"項目"+(multiItems.length+1),amount:"",rate:70,color:rowColors[multiItems.length%rowColors.length]});buildMultiItems();calcMulti();saveSettings();}
+  function delMultiItem(i){multiItems.splice(i,1);buildMultiItems();calcMulti();saveSettings();}
   function calcMulti(){
     const total=parseFloat(document.getElementById("multiTotal").value)||0;
     let totalBiz=0;
     const rows=multiItems.map((item,i)=>{
       const amt=parseFloat(item.amount)||0;
-      const biz=Math.round(amt*item.rate/100);
+      const safeRate=Math.min(100,Math.max(0,item.rate||0));
+      const biz=Math.round(amt*safeRate/100);
       totalBiz+=biz;
       window["mRaw"+i]=biz;
       return `<div class="result-row">
@@ -623,7 +651,8 @@
     // 固定項目
     seikyuFixed.forEach((item,i) => {
       const amt = parseFloat(item.amount) || 0;
-      const biz = Math.round(amt * item.rate / 100);
+      const safeRate = Math.min(100, Math.max(0, item.rate||0));
+      const biz = Math.round(amt * safeRate / 100);
       bizTotal += biz;
       window["sRaw_f"+i] = biz;
       rows.push(`<div class="result-row">
@@ -642,7 +671,8 @@
     });
 
     // 変動項目
-    const varBiz = Math.round(varAmt * varItem.rate / 100);
+    const safeVarRate = Math.min(100, Math.max(0, varItem.rate||0));
+    const varBiz = Math.round(varAmt * safeVarRate / 100);
     bizTotal += varBiz;
     window.sRaw_v0 = varBiz;
     rows.push(`<div class="result-row">
@@ -662,6 +692,20 @@
     const private_ = total > 0 ? total - bizTotal : 0;
     window.seikyuBizTotalRaw = bizTotal;
     window.seikyuPrivateRaw = private_;
+
+    // ⑥ 事業主貸がマイナスになる場合は警告
+    if(total > 0 && private_ < 0) {
+      const rResult=document.getElementById("seikyuResult");
+      const rRows=document.getElementById("seikyuResultRows");
+      if(rRows) rRows.innerHTML = `<div style="padding:12px;background:#fff0e8;border-radius:12px;color:#e88858;font-weight:700;font-size:13px;">⚠️ 固定項目の合計が請求書合計を超えています。<br>金額・固定合計を確認してください。</div>`;
+      const rBiz=document.getElementById("seikyuBizTotal");
+      const rPriv=document.getElementById("seikyuPrivate");
+      if(rBiz) rBiz.innerHTML = "<span style='color:#e88858'>－</span>";
+      if(rPriv) rPriv.innerHTML = "<span style='color:#e88858'>－</span>";
+      if(rResult) rResult.classList.remove("hidden");
+      buildSeikyuViewRows();
+      return;
+    }
 
     // 表示モードの更新
     buildSeikyuViewRows();
@@ -713,10 +757,10 @@
 
   // ===== タブ =====
   const helpData = {
-    preset: ["📋 プリセット", "科目を選んで金額を入力すると、事業分と事業主貸を自動計算します。\n\n✏️ 編集ボタンで科目名・按分率を自由に変更できます。"],
+    preset: ["📋 プリセット", "科目を選んで金額を入力すると、事業分と事業主貸を自動計算します。\n\n✏️ 編集ボタンで科目名・按分率を自由に変更できます。設定は次回起動時も保存されます。\n\n※ 1円未満の端数は四捨五入して計算します。"],
     custom: ["✏️ カスタム", "事業用とプライベートの比率を自由に設定できます。\n\n片方の数字を入力すると、もう片方が自動で補完されます。"],
-    multi: ["📊 複数按分", "携帯代など、項目ごとに金額と按分率が違う場合に使います。\n\n各項目の金額と按分率を入力すると、合計と事業主貸を自動計算します。"],
-    seikyu: ["📄 請求書按分", "管理組合など、固定+変動がある請求書の按分に使います。\n\n固定項目を設定すると、変動項目（水道代など）は合計から自動逆算されます。✏️ 編集で設定変更できます。"]
+    multi: ["📊 複数按分", "携帯代など、項目ごとに金額と按分率が違う場合に使います。\n\n各項目の金額と按分率を入力すると、合計と事業主貸を自動計算します。項目名・按分率は次回起動時も保存されます。\n\n※ 1円未満の端数は四捨五入して計算します。"],
+    seikyu: ["📄 請求書按分", "管理組合など、固定+変動がある請求書の按分に使います。\n\n固定項目を設定すると、変動項目（水道代など）は合計から自動逆算されます。✏️ 編集で設定変更できます。\n\n※ 1円未満の端数は四捨五入して計算します。"]
   };
   function showHelp() {
     const d = helpData[currentTab] || ["使い方", ""];
@@ -754,8 +798,11 @@
       localStorage.setItem("anbun_presets", JSON.stringify(presets));
       localStorage.setItem("anbun_seikyu_fixed", JSON.stringify(seikyuFixed));
       localStorage.setItem("anbun_seikyu_variable", JSON.stringify(seikyuVariable));
-      localStorage.setItem("anbun_seikyu_override", seikyuFixedTotalOverride);
+      // ③ 空欄も正しく保存（nullでなく空文字列として保存）
+      localStorage.setItem("anbun_seikyu_override", seikyuFixedTotalOverride === undefined ? "" : String(seikyuFixedTotalOverride));
       localStorage.setItem("anbun_seikyu_name", document.getElementById("seikyuName")?document.getElementById("seikyuName").value:"管理組合");
+      // ② 複数按分の保存
+      localStorage.setItem("anbun_multi_items", JSON.stringify(multiItems));
     } catch(e) {}
   }
   function loadSettings() {
@@ -766,8 +813,9 @@
       if(sf) seikyuFixed = JSON.parse(sf);
       const sv = localStorage.getItem("anbun_seikyu_variable");
       if(sv) seikyuVariable = JSON.parse(sv);
+      // ③ 空欄状態も正しく復元
       const so = localStorage.getItem("anbun_seikyu_override");
-      if(so) seikyuFixedTotalOverride = so;
+      if(so !== null) seikyuFixedTotalOverride = so; // nullチェック（未保存と空欄を区別）
       const sn = localStorage.getItem("anbun_seikyu_name");
       if(sn) {
         const nameEl = document.getElementById("seikyuName");
@@ -775,6 +823,9 @@
         if(nameEl) nameEl.value = sn;
         if(titleEl) titleEl.textContent = sn;
       }
+      // ② 複数按分の復元
+      const mi = localStorage.getItem("anbun_multi_items");
+      if(mi) multiItems = JSON.parse(mi);
     } catch(e) {}
   }
 
