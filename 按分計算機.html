@@ -6,6 +6,12 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <title>按分計算機</title>
   <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="按分計算機">
+  <meta name="theme-color" content="#FFB7C5">
   <style>
     :root {
       --pink:#FFB7C5; --lavender:#C9B8F0; --mint:#B8E8D8;
@@ -426,7 +432,7 @@
     editMode=!editMode;
     document.getElementById("editToggleBtn").textContent=editMode?"✅ 完了":"✏️ 編集";
     if(editMode){buildEditArea();document.getElementById("presetGrid").classList.add("hidden");document.getElementById("presetEditArea").classList.remove("hidden");}
-    else{buildPresets();document.getElementById("presetGrid").classList.remove("hidden");document.getElementById("presetEditArea").classList.add("hidden");}
+    else{buildPresets();document.getElementById("presetGrid").classList.remove("hidden");document.getElementById("presetEditArea").classList.add("hidden");saveSettings();}
   }
   function selectPreset(id) {
     selectedPreset=presets.find(p=>p.id===id);
@@ -531,7 +537,7 @@
       document.getElementById("seikyuViewMode").classList.remove("hidden");
       document.getElementById("seikyuEditBtn").textContent = "✏️ 編集";
       // 少し遅らせてDOMが確実に表示されてからcalc
-      setTimeout(() => calcSeikyu(), 10);
+      setTimeout(() => { calcSeikyu(); saveSettings(); }, 10);
     }
   }
 
@@ -742,10 +748,40 @@
     else calcSeikyu();
   }
 
+  // ===== LocalStorage =====
+  function saveSettings() {
+    try {
+      localStorage.setItem("anbun_presets", JSON.stringify(presets));
+      localStorage.setItem("anbun_seikyu_fixed", JSON.stringify(seikyuFixed));
+      localStorage.setItem("anbun_seikyu_variable", JSON.stringify(seikyuVariable));
+      localStorage.setItem("anbun_seikyu_override", seikyuFixedTotalOverride);
+      localStorage.setItem("anbun_seikyu_name", document.getElementById("seikyuName")?document.getElementById("seikyuName").value:"管理組合");
+    } catch(e) {}
+  }
+  function loadSettings() {
+    try {
+      const p = localStorage.getItem("anbun_presets");
+      if(p) presets = JSON.parse(p);
+      const sf = localStorage.getItem("anbun_seikyu_fixed");
+      if(sf) seikyuFixed = JSON.parse(sf);
+      const sv = localStorage.getItem("anbun_seikyu_variable");
+      if(sv) seikyuVariable = JSON.parse(sv);
+      const so = localStorage.getItem("anbun_seikyu_override");
+      if(so) seikyuFixedTotalOverride = so;
+      const sn = localStorage.getItem("anbun_seikyu_name");
+      if(sn) {
+        const nameEl = document.getElementById("seikyuName");
+        const titleEl = document.getElementById("seikyuSectionTitle");
+        if(nameEl) nameEl.value = sn;
+        if(titleEl) titleEl.textContent = sn;
+      }
+    } catch(e) {}
+  }
+
   // 初期化
+  loadSettings();
   buildPresets();
   buildMultiItems();
-  // 請求書按分は表示モードのみ初期化
   if(document.getElementById("seikyuViewRows")) buildSeikyuViewRows();
 </script>
 </body>
