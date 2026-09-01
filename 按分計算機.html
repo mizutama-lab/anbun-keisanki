@@ -99,15 +99,15 @@
     .preset-edit-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
     .preset-edit-name-input { flex:1; border:2px solid #e8d8f0; border-radius:8px; padding:6px 10px; font-size:13px; font-weight:700; font-family:"Zen Maru Gothic",sans-serif; color:var(--text); background:white; outline:none; }
     .preset-edit-name-input:focus { border-color:var(--lavender); }
-    .preset-edit-rate-input { width:56px; border:2px solid #e8d8f0; border-radius:8px; padding:6px 8px; font-size:15px; font-weight:700; font-family:"Zen Maru Gothic",sans-serif; color:var(--text); background:white; outline:none; text-align:center; }
+    .preset-edit-rate-input { width:44px; flex-shrink:0; border:2px solid #e8d8f0; border-radius:8px; padding:6px 4px; font-size:13px; font-weight:700; font-family:"Zen Maru Gothic",sans-serif; color:var(--text); background:white; outline:none; text-align:center; }
     .preset-edit-rate-input:focus { border-color:var(--lavender); }
-    .percent-sign { font-size:13px; color:var(--text-light); font-weight:700; flex-shrink:0; }
-    .priv-preview { font-size:10px; color:var(--text-light); flex-shrink:0; width:48px; text-align:right; }
+    .percent-sign { font-size:13px; color:var(--text-light); font-weight:700; flex-shrink:0; padding-right:2px; }
+    .priv-preview { font-size:10px; color:var(--text-light); flex-shrink:0; width:40px; text-align:right; white-space:nowrap; overflow:hidden; }
     .custom-row { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
     .custom-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
     .custom-label-input { flex:1.2; border:2px solid #e8d8f0; border-radius:10px; padding:10px 12px; font-size:13px; font-family:"Zen Maru Gothic",sans-serif; color:var(--text); background:#faf5ff; outline:none; transition:border-color 0.2s; }
     .custom-label-input:focus { border-color:var(--lavender); }
-    .custom-rate-input { width:64px; border:2px solid #e8d8f0; border-radius:10px; padding:10px 8px; font-size:16px; font-weight:700; font-family:"Zen Maru Gothic",sans-serif; color:var(--text); background:#faf5ff; outline:none; text-align:center; transition:border-color 0.2s; }
+    .custom-rate-input { width:52px; flex-shrink:0; border:2px solid #e8d8f0; border-radius:10px; padding:10px 4px; font-size:15px; font-weight:700; font-family:"Zen Maru Gothic",sans-serif; color:var(--text); background:#faf5ff; outline:none; text-align:center; transition:border-color 0.2s; }
     .custom-rate-input:focus { border-color:var(--lavender); }
     .total-check { display:flex; align-items:center; justify-content:center; gap:6px; margin-top:12px; padding:8px 16px; border-radius:10px; font-size:12px; font-weight:700; transition:all 0.3s; }
     .total-check.ok { background:#e8fff0; color:#58c878; }
@@ -694,7 +694,7 @@
     window.seikyuPrivateRaw = private_;
 
     // ⑥ 事業主貸がマイナスになる場合は警告
-    if(total > 0 && private_ < 0) {
+    if(total > 0 && total < fixedTotal) {
       const rResult=document.getElementById("seikyuResult");
       const rRows=document.getElementById("seikyuResultRows");
       if(rRows) rRows.innerHTML = `<div style="padding:12px;background:#fff0e8;border-radius:12px;color:#e88858;font-weight:700;font-size:13px;">⚠️ 固定項目の合計が請求書合計を超えています。<br>金額・固定合計を確認してください。</div>`;
